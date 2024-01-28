@@ -1,0 +1,36 @@
+:root {
+    --color-background: rgba(0, 0, 0, 0.866);
+    --color-seconday: burlywood;
+    --color-font: white;
+
+    --color-shadow: rgb(20, 19, 19);
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    width: 350px;
+    height: 100%;
+    text-align: center;
+    background-color: var(--color-background);
+    font-size: 1.6rem;
+}
+
+h1,
+p {
+    color: var(--color-font);
+}
+
+h1 {
+    font-size: 3.2rem;
+}
+
+#minutes,
+#colon,
+#seconds {
+    display: inline;
+}
