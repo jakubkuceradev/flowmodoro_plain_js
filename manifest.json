@@ -1,0 +1,20 @@
+{
+    "manifest_version": 2,
+    "name": "Flowmodoro",
+    "version": "1.0",
+    "description": "A flexible twist on the Pomodoro technique, adapting to your unique work rhythm for optimal productivity in every session.",
+    "icons": {
+        "16": "images/icon16.png",
+        "48": "images/icon48.png",
+        "128": "images/icon128.png"
+    },
+    "browser_action": {
+        "default_icon": {
+            "16": "images/icon16.png",
+            "48": "images/icon48.png",
+            "128": "images/icon128.png"
+        },
+        "default_title": "Flowmodoro - Pomodoro Technique Alternative",
+        "default_popup": "popup.html"
+    }
+}
