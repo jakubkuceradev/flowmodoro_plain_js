@@ -1,9 +1,12 @@
 :root {
-    --color-background: rgba(0, 0, 0, 0.866);
-    --color-seconday: burlywood;
+    font-size: 100%;
+
+    --color-primary: #282828;
+    --color-secondary: rgb(0, 255, 47);
     --color-font: white;
 
-    --color-shadow: rgb(20, 19, 19);
+    --color-background: #393939;
+    --color-shadow: rgba(0, 0, 0, 0.806);
 }
 
 * {
@@ -12,16 +15,18 @@
     box-sizing: border-box;
 }
 
+html,
 body {
-    width: 350px;
-    height: 100%;
-    text-align: center;
+    height: 550px;
+    margin-top: 0.2rem;
+    min-width: 24rem;
     background-color: var(--color-background);
     font-size: 1.6rem;
+    font-family: sans-serif;
 }
 
-h1,
-p {
+p,
+h1 {
     color: var(--color-font);
 }
 
@@ -29,8 +34,87 @@ h1 {
     font-size: 3.2rem;
 }
 
-#minutes,
-#colon,
-#seconds {
-    display: inline;
+section {
+    display: flex;
+    align-items: center;
+    height: 100%;
+}
+
+.container {
+    width: 100%;
+    min-width: 20rem;
+    margin: 0 auto;
+    padding: 0 2rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.timer {
+    margin-top: 1rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 20rem;
+    height: 20rem;
+    background-color: var(--color-primary);
+
+    border-radius: 50%;
+    -webkit-box-shadow: 0px 0px 15px 10px var(--color-shadow);
+    box-shadow: 0px 0px 15px 10px var(--color-shadow);
+}
+
+.circle {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 85%;
+    height: 85%;
+    border-radius: 50%;
+    background-color: var(--color-secondary);
+    position: relative;
+    -webkit-box-shadow: 0px 0px 15px 10px var(--color-shadow);
+    box-shadow: 0px 0px 15px 10px var(--color-shadow);
+}
+
+.circle::before {
+    content: "";
+    position: absolute;
+    width: 95%;
+    height: 95%;
+    border-radius: 50%;
+    opacity: 90%;
+    background-color: #0f0f10;
+}
+
+.time {
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.time p {
+    font-size: 4rem;
+}
+
+.controls {
+    margin-top: 0.5rem;
+}
+
+.controls button {
+    border: none;
+    background-color: transparent;
+    cursor: pointer;
+    font-size: 5rem;
+    color: var(--color-font);
+}
+
+.controls #reset {
+    display: none;
+}
+
+.tasks {
+    margin-top: 0.5rem;
 }
