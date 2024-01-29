@@ -2,9 +2,25 @@
 
 const audio = new Audio("sounds/alarm.wav");
 
-let breakTimeDivisor = 4; // Used to determine the length of a break.
-let milisecondsTime = 0;
-let currentStatus = "paused";
+let breakTimeDivisor; // Used to determine the length of a break.
+let milisecondsTime;
+let currentStatus;
+
+chrome.storage.local.get(["breakTimeDivisor", "milisecondsTime", "currentStatus"], (result) => {
+    console.log("init", "divisor:", breakTimeDivisor, "time", milisecondsTime, "status", currentStatus);
+
+    breakTimeDivisor = result.breakTimeDivisor ?? 4;
+    milisecondsTime = result.milisecondsTime ?? 0;
+    currentStatus = result.currentStatus ?? "paused";
+
+    console.log("after assignment", "divisor:", breakTimeDivisor, "time", milisecondsTime, "status", currentStatus);
+
+    if (currentStatus === "work") {
+        startWork();
+    } else if (currentStatus === "break") {
+        startBreak();
+    }
+});
 
 // Receives messages from popup.js
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
@@ -31,9 +47,9 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
 // Resets and pauses the timer.
 const pauseTimer = () => {
     chrome.browserAction.setIcon({ path: "images/icon-pause.png" });
-
-    currentStatus = "paused";
     milisecondsTime = 0;
+    currentStatus = "paused";
+    chrome.storage.local.set({ milisecondsTime, currentStatus });
 
     chrome.runtime.sendMessage({ action: "updateData", time: milisecondsTime, status: currentStatus });
     console.log("sent updateData message from background.js from pause timer");
@@ -42,15 +58,21 @@ const pauseTimer = () => {
 // Starts the timer.
 const startWork = () => {
     chrome.browserAction.setIcon({ path: "images/icon-work.png" });
-
     currentStatus = "work";
+    chrome.storage.local.set({ currentStatus });
+
     audio.pause();
 
-    const startTime = Date.now();
+    const startTime = Date.now() - milisecondsTime;
 
     const updateTime = () => {
         const currentTime = Date.now();
         milisecondsTime = currentTime - startTime;
+        chrome.storage.local.set({ milisecondsTime });
+
+        // chrome.storage.local.get("milisecondsTime", (result) => {
+        //     console.log("time:", "google", result.milisecondsTime, "local", milisecondsTime);
+        // });
 
         if (currentStatus !== "work") return;
 
@@ -65,8 +87,8 @@ const startWork = () => {
 // Calculates the time and starts the break count down.
 const startBreak = () => {
     chrome.browserAction.setIcon({ path: "images/icon-break.png" });
-
     currentStatus = "break";
+    chrome.storage.local.set({ currentStatus });
     milisecondsTime = Math.floor(milisecondsTime / breakTimeDivisor);
 
     const startTime = Date.now();
@@ -76,6 +98,7 @@ const startBreak = () => {
         const currentTime = Date.now();
         const elapsedTime = currentTime - startTime;
         milisecondsTime = breakTime - elapsedTime;
+        chrome.storage.local.set({ milisecondsTime });
 
         if (milisecondsTime <= 0) {
             audio.play();
