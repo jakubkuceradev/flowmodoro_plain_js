@@ -8,7 +8,9 @@ const COLORPAUSED = "#ffff00";
 const COLORWORK = "#ff0000";
 const COLORBREAK = "#00ff2f";
 
-let breakTimeDivisor = 1;
+const audio = new Audio("sounds/alarm.wav");
+
+let breakTimeDivisor = 4; // Used to determine the length of a break.
 let milisecondsTime = 0;
 let currentStatus = "paused";
 
@@ -18,6 +20,10 @@ document.addEventListener("DOMContentLoaded", () => {
     // pauseTimer();
     renderStatus();
     renderTime();
+
+    window.addEventListener("pagehide", () => {
+        document.title = `INACTIVE ${formatTime(minutesTime)}:${formatTime(secondsTime)}`;
+    });
 
     buttonElement.addEventListener("click", (event) => {
         if (event.type !== "click") {
@@ -45,6 +51,7 @@ const startWork = () => {
     currentStatus = "work";
     milisecondsTime = 0;
 
+    audio.pause();
     renderTime();
     renderStatus();
 
@@ -79,7 +86,11 @@ const startBreak = () => {
         const elapsedTime = currentTime - startTime;
         milisecondsTime = breakTime - elapsedTime;
 
-        if (milisecondsTime <= 0) pauseTimer();
+        if (milisecondsTime <= 0) {
+            audio.play();
+
+            pauseTimer();
+        }
         if (currentStatus !== "break") return;
 
         renderTime();
@@ -112,6 +123,7 @@ const renderTime = () => {
     const minutesTime = Math.floor(milisecondsTime / (1000 * 60));
     const secondsTime = Math.floor(milisecondsTime / 1000 - minutesTime * 60);
 
+    document.title = `${formatTime(minutesTime)}:${formatTime(secondsTime)} Flowmodoro`;
     document.getElementById("minutes").textContent = formatTime(minutesTime);
     document.getElementById("seconds").textContent = formatTime(secondsTime);
 };
