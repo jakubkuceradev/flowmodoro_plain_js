@@ -30,6 +30,8 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
 
 // Resets and pauses the timer.
 const pauseTimer = () => {
+    chrome.browserAction.setIcon({ path: "images/icon-pause.png" });
+
     currentStatus = "paused";
     milisecondsTime = 0;
 
@@ -39,6 +41,8 @@ const pauseTimer = () => {
 
 // Starts the timer.
 const startWork = () => {
+    chrome.browserAction.setIcon({ path: "images/icon-work.png" });
+
     currentStatus = "work";
     audio.pause();
 
@@ -60,6 +64,8 @@ const startWork = () => {
 
 // Calculates the time and starts the break count down.
 const startBreak = () => {
+    chrome.browserAction.setIcon({ path: "images/icon-break.png" });
+
     currentStatus = "break";
     milisecondsTime = Math.floor(milisecondsTime / breakTimeDivisor);
 

@@ -12,9 +12,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const buttonElement = document.getElementById("work-break");
 
     chrome.runtime.sendMessage({ action: "requestData" }, (response) => {
-        if (response) console.log(response);
-
-        if (response && response.time && response.status) {
+        if (response) {
             console.log("response:", response, response.time, response.status);
             renderTime(response.time);
             renderStatus(response.status);
