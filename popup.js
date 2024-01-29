@@ -13,7 +13,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
     chrome.runtime.sendMessage({ action: "requestData" }, (response) => {
         if (response) {
-            console.log("response:", response, response.time, response.status);
             renderTime(response.time);
             renderStatus(response.status);
         }
@@ -21,7 +20,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
     chrome.runtime.onMessage.addListener((request) => {
         if (request.action === "updateData") {
-            console.log("received updateData message from background.js in popup.js");
             renderTime(request.time);
             renderStatus(request.status);
         }
@@ -34,8 +32,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
 // Updates the shown status message and the color of the timer.
 const renderStatus = (currentStatus) => {
-    console.log("rendering status", "status:", currentStatus);
-
     const color = (() => {
         if (currentStatus === "paused") return COLORPAUSED;
         else if (currentStatus === "work") return COLORWORK;
@@ -47,8 +43,6 @@ const renderStatus = (currentStatus) => {
         else if (currentStatus === "work") return STATUSWORKMESSAGE;
         else if (currentStatus === "break") return STATUSBREAKMESSAGE;
     })();
-
-    console.log("setting color to", color, "in popup.js");
 
     document.documentElement.style.setProperty("--color-secondary", color);
     document.getElementById("status-message").textContent = statusMessage;
