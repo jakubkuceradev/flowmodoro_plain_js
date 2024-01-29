@@ -1,93 +1,122 @@
-const statusPausedMessage = "Start the Timer!";
-const statusWorkMessage = "Get to Work!";
-const statusBreakMessage = "Take a Break!";
+"use strict";
 
-let colorPaused = "#ffff00";
-let colorWork = "#ff0000";
-let colorBreak = "#00ff2f";
-let minutesTime = "00";
-let secondsTime = "00";
-let breakTimeDivisor = 3;
-let statusMessage = statusPausedMessage;
-let intervalFunction;
+const STATUSPAUSEDMESSAGE = "Start the Timer!";
+const STATUSWORKMESSAGE = "Get to Work!";
+const STATUSBREAKMESSAGE = "Take a Break!";
 
-window.onload = () => {
-    document.getElementById("status-message").innerText = statusPausedMessage;
-    document.getElementById("minutes").innerText = "00";
-    document.getElementById("seconds").innerText = "00";
+const COLORPAUSED = "#ffff00";
+const COLORWORK = "#ff0000";
+const COLORBREAK = "#00ff2f";
 
-    document.documentElement.style.setProperty("--color-secondary", colorPaused);
+let breakTimeDivisor = 0.2;
+let milisecondsTime = 0;
+let currentStatus = "paused";
+
+document.addEventListener("DOMContentLoaded", () => {
+    const buttonElement = document.getElementById("work-break");
+
+    // pauseTimer();
+    renderStatus();
+    renderTime();
+
+    buttonElement.addEventListener("click", (event) => {
+        if (event.type !== "click") {
+        } else if (currentStatus === "paused") {
+            startWork();
+        } else if (currentStatus === "work") {
+            startBreak();
+        } else if (currentStatus === "break") {
+            pauseTimer();
+        }
+    });
+});
+
+// Resets and pauses the timer.
+const pauseTimer = () => {
+    currentStatus = "paused";
+    milisecondsTime = 0;
+
+    renderTime();
+    renderStatus();
 };
 
+// Starts the timer.
+const startWork = () => {
+    currentStatus = "work";
+    milisecondsTime = 0;
+
+    renderTime();
+    renderStatus();
+
+    const startTime = Date.now();
+
+    const updateTime = () => {
+        const currentTime = Date.now();
+        milisecondsTime = currentTime - startTime;
+
+        if (currentStatus !== "work") return;
+
+        renderTime();
+        setTimeout(updateTime, 200);
+    };
+
+    updateTime();
+};
+
+// Calculates the time and starts the break count down.
+const startBreak = () => {
+    currentStatus = "break";
+    milisecondsTime = Math.floor(milisecondsTime / breakTimeDivisor);
+
+    renderTime();
+    renderStatus();
+
+    const startTime = Date.now();
+    const breakTime = milisecondsTime;
+
+    const updateTime = () => {
+        const currentTime = Date.now();
+        const elapsedTime = currentTime - startTime;
+        milisecondsTime = breakTime - elapsedTime;
+
+        if (milisecondsTime <= 0) pauseTimer();
+        if (currentStatus !== "break") return;
+
+        renderTime();
+        setTimeout(updateTime, 200);
+    };
+
+    updateTime();
+};
+
+// Updates the shown status message and the color of the timer.
+const renderStatus = () => {
+    const color = (() => {
+        if (currentStatus === "paused") return COLORPAUSED;
+        else if (currentStatus === "work") return COLORWORK;
+        else if (currentStatus === "break") return COLORBREAK;
+    })();
+
+    const statusMessage = (() => {
+        if (currentStatus === "paused") return STATUSPAUSEDMESSAGE;
+        else if (currentStatus === "work") return STATUSWORKMESSAGE;
+        else if (currentStatus === "break") return STATUSBREAKMESSAGE;
+    })();
+
+    document.documentElement.style.setProperty("--color-secondary", color);
+    document.getElementById("status-message").textContent = statusMessage;
+};
+
+// Updates the shown time.
+const renderTime = () => {
+    const minutesTime = Math.floor(milisecondsTime / (1000 * 60));
+    const secondsTime = Math.floor(milisecondsTime / 1000 - minutesTime * 60);
+
+    document.getElementById("minutes").textContent = formatTime(minutesTime);
+    document.getElementById("seconds").textContent = formatTime(secondsTime);
+};
+
+// Pads single digit numbers with a zero and returns number as a string.
 const formatTime = (number) => {
     return String(number).padStart(2, "0");
-};
-
-const startWork = () => {
-    document.documentElement.style.setProperty("--color-secondary", colorWork);
-    document.getElementById("status-message").innerText = statusWorkMessage;
-    document.getElementById("work-break").onclick = startBreak;
-
-    secondsTime = 0;
-    minutesTime = 0;
-
-    const countUp = () => {
-        secondsTime++;
-
-        if (secondsTime == 60) {
-            secondsTime = 0;
-            minutesTime++;
-        }
-
-        document.getElementById("seconds").innerText = formatTime(secondsTime);
-        document.getElementById("minutes").innerText = formatTime(minutesTime);
-        console.log("work", minutesTime, secondsTime);
-    };
-
-    intervalFunction = setInterval(countUp, 1000);
-};
-
-const pauseTimer = () => {
-    clearInterval(intervalFunction);
-
-    secondsTime = 0;
-    minutesTime = 0;
-
-    document.documentElement.style.setProperty("--color-secondary", colorPaused);
-    document.getElementById("seconds").innerText = formatTime(secondsTime);
-    document.getElementById("minutes").innerText = formatTime(minutesTime);
-    document.getElementById("work-break").onclick = startWork;
-};
-
-const startBreak = () => {
-    clearInterval(intervalFunction);
-
-    document.documentElement.style.setProperty("--color-secondary", colorBreak);
-    document.getElementById("status-message").innerText = statusBreakMessage;
-    document.getElementById("work-break").onclick = pauseTimer;
-
-    const dividedSeconds = (minutesTime * 60 + secondsTime) / breakTimeDivisor;
-
-    minutesTime = Math.floor(dividedSeconds / 60);
-    secondsTime = Math.floor(dividedSeconds % 60);
-
-    const countDown = () => {
-        secondsTime--;
-
-        if (secondsTime === -1) {
-            secondsTime = 59;
-            minutesTime--;
-
-            if (minutesTime < 0) {
-                pauseTimer();
-                return;
-            }
-        }
-
-        document.getElementById("seconds").innerText = formatTime(secondsTime);
-        document.getElementById("minutes").innerText = formatTime(minutesTime);
-        console.log("break", minutesTime, secondsTime);
-    };
-
-    intervalFunction = setInterval(countDown, 1000);
 };

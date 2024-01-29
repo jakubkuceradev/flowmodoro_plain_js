@@ -2,6 +2,7 @@
     "manifest_version": 2,
     "name": "Flowmodoro",
     "version": "1.0",
+    "permissions": ["storage", "notifications"],
     "description": "A flexible twist on the Pomodoro technique, adapting to your unique work rhythm for optimal productivity in every session.",
     "icons": {
         "16": "images/icon16.png",
