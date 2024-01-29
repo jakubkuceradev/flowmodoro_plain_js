@@ -8,7 +8,7 @@ const COLORPAUSED = "#ffff00";
 const COLORWORK = "#ff0000";
 const COLORBREAK = "#00ff2f";
 
-let breakTimeDivisor = 0.2;
+let breakTimeDivisor = 1;
 let milisecondsTime = 0;
 let currentStatus = "paused";
 
