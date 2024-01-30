@@ -49,9 +49,11 @@ const pauseTimer = () => {
     chrome.browserAction.setIcon({ path: "images/icon-pause.png" });
     milisecondsTime = 0;
     currentStatus = "paused";
-    chrome.storage.local.set({ milisecondsTime, currentStatus });
+    chrome.storage.local.set({ milisecondsTime: 0, currentStatus: "paused" });
 
-    chrome.runtime.sendMessage({ action: "updateData", time: milisecondsTime, status: currentStatus });
+    console.log("start pause", "time:", milisecondsTime);
+
+    chrome.runtime.sendMessage({ action: "updateData", time: 0, status: "paused" });
     console.log("sent updateData message from background.js from pause timer");
 };
 
@@ -62,6 +64,8 @@ const startWork = () => {
     chrome.storage.local.set({ currentStatus });
 
     audio.pause();
+
+    console.log("start work", "time:", milisecondsTime);
 
     const startTime = Date.now() - milisecondsTime;
 
@@ -88,24 +92,26 @@ const startWork = () => {
 const startBreak = () => {
     chrome.browserAction.setIcon({ path: "images/icon-break.png" });
     currentStatus = "break";
-    chrome.storage.local.set({ currentStatus });
+    chrome.storage.local.set({ currentStatus: "break" });
     milisecondsTime = Math.floor(milisecondsTime / breakTimeDivisor);
 
     const startTime = Date.now();
     const breakTime = milisecondsTime;
 
     const updateTime = () => {
+        if (currentStatus !== "break") return;
+
         const currentTime = Date.now();
         const elapsedTime = currentTime - startTime;
         milisecondsTime = breakTime - elapsedTime;
         chrome.storage.local.set({ milisecondsTime });
 
+        console.log("updateTime break", "elapsed", elapsedTime, "time", milisecondsTime);
+
         if (milisecondsTime <= 0) {
             audio.play();
             pauseTimer();
         }
-
-        if (currentStatus !== "break") return;
 
         chrome.runtime.sendMessage({ action: "updateData", time: milisecondsTime, status: currentStatus });
         setTimeout(updateTime, 200);
