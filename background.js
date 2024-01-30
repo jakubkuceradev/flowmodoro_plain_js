@@ -9,7 +9,7 @@ let currentStatus;
 chrome.storage.local.get(["breakTimeDivisor", "milisecondsTime", "currentStatus"], (result) => {
     console.log("init", "divisor:", breakTimeDivisor, "time", milisecondsTime, "status", currentStatus);
 
-    breakTimeDivisor = result.breakTimeDivisor ?? 4;
+    breakTimeDivisor = result.breakTimeDivisor ?? 5;
     milisecondsTime = result.milisecondsTime ?? 0;
     currentStatus = result.currentStatus ?? "paused";
 
