@@ -54,8 +54,7 @@ const renderTime = (milisecondsTime) => {
     const secondsTime = Math.floor(milisecondsTime / 1000 - minutesTime * 60);
 
     document.title = `${formatTime(minutesTime)}:${formatTime(secondsTime)} Flowmodoro`;
-    document.getElementById("minutes").textContent = formatTime(minutesTime);
-    document.getElementById("seconds").textContent = formatTime(secondsTime);
+    document.getElementById("time").textContent = `${formatTime(minutesTime)}:${formatTime(secondsTime)}`;
 };
 
 // Pads single digit numbers with a zero and returns number as a string.
